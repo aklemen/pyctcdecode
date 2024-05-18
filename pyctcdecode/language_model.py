@@ -539,7 +539,7 @@ class TransformerLanguageModel(AbstractLanguageModel):
 
         probabilities = torch.nn.functional.softmax(outputs.logits[0, -1, :], dim=-1)
         word_id = self.tokenizer.encode(word, add_special_tokens=False)[0]
-        lm_score = probabilities[word_id].item()
+        lm_score = np.log(probabilities[word_id].item())
         lm_score = self.alpha * lm_score + self.beta
 
         print('============================ Scoring word:', word, '============================')
