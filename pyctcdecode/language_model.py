@@ -516,6 +516,7 @@ class TransformerLanguageModel(AbstractLanguageModel):
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.alpha = alpha
         self.beta = beta
+        print('Transformer language model initialized.')
 
     @property
     def order(self) -> int:
