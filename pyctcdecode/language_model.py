@@ -531,13 +531,17 @@ class TransformerLanguageModel(AbstractLanguageModel):
         return 0
 
     def score(self, prev_state: TransformerLMState, word: str, is_last_word: bool = False) -> Tuple[float, AbstractLMState]:
-        # inputs = self.tokenizer.encode(word, return_tensors='pt')
-        # with torch.no_grad():
-        #     outputs = self.model(**inputs, labels=inputs)
-        # loss = outputs.loss
-        # lm_score = -loss.item()  # convert loss to score
-        # lm_score = self.alpha * lm_score + self.beta  # adjust score using alpha and beta
-        lm_score = 1
+        whole_sentence = ' '.join(prev_state.words + [word])
+        inputs = self.tokenizer.encode(whole_sentence, return_tensors='pt')
+
+        with torch.no_grad():
+            outputs = self.model(inputs)
+
+        probabilities = torch.nn.functional.softmax(outputs.logits[0, -1, :], dim=-1)
+        word_id = self.tokenizer.encode(word, add_special_tokens=False)[0]
+        lm_score = probabilities[word_id].item()
+        lm_score = self.alpha * lm_score + self.beta
+
         print('============================ Scoring word:', word, '============================')
         print('prev_state.words:', prev_state.words)
         print('word:', word)
