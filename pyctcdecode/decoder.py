@@ -46,6 +46,7 @@ from .language_model import (
     AbstractLMState,
     HotwordScorer,
     LanguageModel,
+    TransformerLanguageModel,
     load_unigram_set_from_arpa,
 )
 
@@ -1096,4 +1097,21 @@ def build_ctcdecoder(
         )
     else:
         language_model = None
+    return BeamSearchDecoderCTC(alphabet, language_model)
+
+
+def build_llm_ctcdecoder(
+    labels: List[str],
+    model_name: str,
+    alpha: float = DEFAULT_ALPHA,
+    beta: float = DEFAULT_BETA,
+) -> BeamSearchDecoderCTC:
+    alphabet = Alphabet.build_alphabet(labels)
+
+    language_model: Optional[AbstractLanguageModel] = TransformerLanguageModel(
+        model_name,
+        alpha=alpha,
+        beta=beta,
+    )
+
     return BeamSearchDecoderCTC(alphabet, language_model)

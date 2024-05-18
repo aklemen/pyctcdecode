@@ -22,6 +22,9 @@ from .constants import (
     LOG_BASE_CHANGE_FACTOR,
 )
 
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
+
 
 logger = logging.getLogger(__name__)
 
@@ -500,3 +503,35 @@ class MultiLanguageModel(AbstractLanguageModel):
             end_state.append(lm_end_state)
         score = score / len(self._language_models)
         return score, MultiLanguageModelState(end_state)
+
+
+class TransformerLMState(AbstractLMState):
+    def __init__(self):
+        pass
+
+
+class TransformerLanguageModel(AbstractLanguageModel):
+    def __init__(self, model_name: str, alpha: float = 0.5, beta: float = 1.5):
+        self.model = AutoModelForCausalLM.from_pretrained(model_name)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.alpha = alpha
+        self.beta = beta
+
+    @property
+    def order(self) -> int:
+        raise NotImplementedError('Transformer language model does not have an order.')
+
+    def get_start_state(self) -> AbstractLMState:
+        return TransformerLMState()
+
+    def score_partial_token(self, partial_token: str) -> float:
+        raise NotImplementedError()
+
+    def score(self, prev_state: AbstractLMState, word: str, is_last_word: bool = False) -> Tuple[float, AbstractLMState]:
+        inputs = self.tokenizer.encode(word, return_tensors='pt')
+        with torch.no_grad():
+            outputs = self.model(**inputs, labels=inputs)
+        loss = outputs.loss
+        lm_score = -loss.item()  # convert loss to score
+        lm_score = self.alpha * lm_score + self.beta  # adjust score using alpha and beta
+        return lm_score, TransformerLMState()
