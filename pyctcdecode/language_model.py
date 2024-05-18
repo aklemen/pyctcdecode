@@ -506,8 +506,8 @@ class MultiLanguageModel(AbstractLanguageModel):
 
 
 class TransformerLMState(AbstractLMState):
-    def __init__(self):
-        pass
+    def __init__(self, words: []):
+        self.words = words
 
 
 class TransformerLanguageModel(AbstractLanguageModel):
@@ -523,14 +523,14 @@ class TransformerLanguageModel(AbstractLanguageModel):
         print('Transformer language model does not have an order, returning 1.')
         return 1
 
-    def get_start_state(self) -> AbstractLMState:
-        return TransformerLMState()
+    def get_start_state(self) -> TransformerLMState:
+        return TransformerLMState([])
 
     def score_partial_token(self, partial_token: str) -> float:
         print('Transformer language model will not score the partial token (returning 0): ', partial_token)
         return 0
 
-    def score(self, prev_state: AbstractLMState, word: str, is_last_word: bool = False) -> Tuple[float, AbstractLMState]:
+    def score(self, prev_state: TransformerLMState, word: str, is_last_word: bool = False) -> Tuple[float, AbstractLMState]:
         # inputs = self.tokenizer.encode(word, return_tensors='pt')
         # with torch.no_grad():
         #     outputs = self.model(**inputs, labels=inputs)
@@ -538,7 +538,13 @@ class TransformerLanguageModel(AbstractLanguageModel):
         # lm_score = -loss.item()  # convert loss to score
         # lm_score = self.alpha * lm_score + self.beta  # adjust score using alpha and beta
         lm_score = 1
-        return lm_score, TransformerLMState()
+        print('============================ Scoring word:', word, '============================')
+        print('prev_state:', prev_state)
+        print('word:', word)
+        print('is_last_word:', is_last_word)
+        print('lm_score', lm_score)
+        new_state = TransformerLMState(prev_state.words + [word])
+        return lm_score, new_state
 
     def reset_params(self, **params: Dict[str, Any]) -> None:
         alpha = params.get("alpha")
