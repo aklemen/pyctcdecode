@@ -520,14 +520,12 @@ class TransformerLanguageModel(AbstractLanguageModel):
 
     @property
     def order(self) -> int:
-        print('Transformer language model does not have an order, returning 1.')
         return 1
 
     def get_start_state(self) -> TransformerLMState:
         return TransformerLMState([])
 
     def score_partial_token(self, partial_token: str) -> float:
-        print('Transformer language model will not score the partial token (returning 0): ', partial_token)
         return 0
 
     def score(self, prev_state: TransformerLMState, word: str, is_last_word: bool = False) -> Tuple[float, AbstractLMState]:
@@ -542,11 +540,10 @@ class TransformerLanguageModel(AbstractLanguageModel):
         lm_score = np.log(probabilities[word_id].item())
         lm_score = self.alpha * lm_score + self.beta
 
-        print('============================ Scoring word:', word, '============================')
-        print('prev_state.words:', prev_state.words)
-        print('word:', word)
-        print('is_last_word:', is_last_word)
-        print('lm_score', lm_score)
+        print('========================== SCORING ==============================')
+        print('Word:', word, 'Previous words:', prev_state.words)
+        print('Score:', lm_score)
+        print('=================================================================')
         new_state = TransformerLMState(prev_state.words + [word])
         return lm_score, new_state
 
