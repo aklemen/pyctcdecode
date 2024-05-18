@@ -539,7 +539,7 @@ class TransformerLanguageModel(AbstractLanguageModel):
         # lm_score = self.alpha * lm_score + self.beta  # adjust score using alpha and beta
         lm_score = 1
         print('============================ Scoring word:', word, '============================')
-        print('prev_state:', prev_state)
+        print('prev_state.words:', prev_state.words)
         print('word:', word)
         print('is_last_word:', is_last_word)
         print('lm_score', lm_score)
