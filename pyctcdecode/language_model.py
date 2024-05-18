@@ -520,7 +520,8 @@ class TransformerLanguageModel(AbstractLanguageModel):
 
     @property
     def order(self) -> int:
-        raise NotImplementedError('Transformer language model does not have an order.')
+        print('Transformer language model does not have an order, returning 1.')
+        return 1
 
     def get_start_state(self) -> AbstractLMState:
         return TransformerLMState()
