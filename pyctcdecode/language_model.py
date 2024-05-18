@@ -531,12 +531,13 @@ class TransformerLanguageModel(AbstractLanguageModel):
         return 0
 
     def score(self, prev_state: AbstractLMState, word: str, is_last_word: bool = False) -> Tuple[float, AbstractLMState]:
-        inputs = self.tokenizer.encode(word, return_tensors='pt')
-        with torch.no_grad():
-            outputs = self.model(**inputs, labels=inputs)
-        loss = outputs.loss
-        lm_score = -loss.item()  # convert loss to score
-        lm_score = self.alpha * lm_score + self.beta  # adjust score using alpha and beta
+        # inputs = self.tokenizer.encode(word, return_tensors='pt')
+        # with torch.no_grad():
+        #     outputs = self.model(**inputs, labels=inputs)
+        # loss = outputs.loss
+        # lm_score = -loss.item()  # convert loss to score
+        # lm_score = self.alpha * lm_score + self.beta  # adjust score using alpha and beta
+        lm_score = 1
         return lm_score, TransformerLMState()
 
     def reset_params(self, **params: Dict[str, Any]) -> None:
