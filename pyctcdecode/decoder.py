@@ -891,7 +891,7 @@ class BeamSearchDecoderCTC:
             hotword_weight=hotword_weight,
             lm_start_state=lm_start_state,
         )
-        print('decoded_beams[0].text', decoded_beams[0].text)
+        print(decoded_beams[0].text)
         return decoded_beams[0].text
 
     def decode_batch(

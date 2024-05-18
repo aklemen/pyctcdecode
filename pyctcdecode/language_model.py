@@ -540,7 +540,7 @@ class TransformerLanguageModel(AbstractLanguageModel):
         lm_score = np.log(probabilities[word_id].item())
         lm_score = self.alpha * lm_score + self.beta
 
-        print(' '.join([whole_sentence, word]), '-->', lm_score)
+        print(lm_score, '-->', ' '.join([whole_sentence, word]))
 
         new_state = TransformerLMState(prev_state.words + [word])
         return lm_score, new_state
