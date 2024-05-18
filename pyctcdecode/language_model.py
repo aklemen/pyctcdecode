@@ -535,3 +535,16 @@ class TransformerLanguageModel(AbstractLanguageModel):
         lm_score = -loss.item()  # convert loss to score
         lm_score = self.alpha * lm_score + self.beta  # adjust score using alpha and beta
         return lm_score, TransformerLMState()
+
+    def reset_params(self, **params: Dict[str, Any]) -> None:
+        alpha = params.get("alpha")
+        if alpha is not None:
+            if not isinstance(alpha, float):
+                raise ValueError(f"alpha must be a float. Got {type(alpha)}.")
+            self.alpha = alpha
+
+        beta = params.get("beta")
+        if beta is not None:
+            if not isinstance(beta, float):
+                raise ValueError(f"beta must be a float. Got {type(beta)}.")
+            self.beta = beta
