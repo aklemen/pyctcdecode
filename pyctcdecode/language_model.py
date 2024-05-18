@@ -527,7 +527,8 @@ class TransformerLanguageModel(AbstractLanguageModel):
         return TransformerLMState()
 
     def score_partial_token(self, partial_token: str) -> float:
-        raise NotImplementedError()
+        print('Transformer language model will not score the partial token (returning 0): ', partial_token)
+        raise 0
 
     def score(self, prev_state: AbstractLMState, word: str, is_last_word: bool = False) -> Tuple[float, AbstractLMState]:
         inputs = self.tokenizer.encode(word, return_tensors='pt')
